@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="itmo5:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/itmo5_jar</output-path>
+    <root id="archive" name="itmo5.jar">
+      <element id="module-output" name="itmo5" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/json-20200518.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
