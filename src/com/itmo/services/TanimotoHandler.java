@@ -4,6 +4,7 @@ import com.itmo.models.DuplicateAnalyzeResult;
 import com.itmo.models.News;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class TanimotoHandler {
@@ -14,22 +15,29 @@ public class TanimotoHandler {
     private static int SubtokenLength = 2;
     private static double ThresholdWord = 0.25;
 
+    private double minSenseValue;
 
-    public TanimotoHandler(List<News> newsLists) {
+
+    public TanimotoHandler(List<News> newsLists, double minSenseValue) {
         this.newsLists = newsLists;
+        this.minSenseValue = minSenseValue;
     }
 
-    public List<DuplicateAnalyzeResult> getRetryCounts() {
-        List<DuplicateAnalyzeResult> result = new ArrayList<>();
+    public HashMap<String, DuplicateAnalyzeResult> getRetryCounts() {
+        HashMap<String, DuplicateAnalyzeResult> result = new HashMap<>();
 
-        System.out.println(newsLists.get(0).getTitle());
-        for (News news: newsLists) {
-            double fuzzyValue = calculateFuzzyEqualValue(news.getTitle(), newsLists.get(0).getTitle());
-            System.out.println(news.getTitle());
-            System.out.println(fuzzyValue);
-            System.out.println("---------");
+        for (News news1: newsLists) {
+            for (News news2: newsLists) {
+                double fuzzyValue = calculateFuzzyEqualValue(news1.getTitle(), news2.getTitle());
+                if (fuzzyValue > minSenseValue && !news1.getId().equals(news2.getId())) {
+                    if (!result.containsKey(news1.getId())) {
+                        result.put(news1.getId(), new DuplicateAnalyzeResult(news1, 1));
+                    }else{
+                        result.get(news1.getId()).setRetryCount(result.get(news1.getId()).getRetryCount() + 1);
+                    }
+                }
+            }
         }
-
 
         return result;
     }
@@ -96,10 +104,10 @@ public class TanimotoHandler {
         int equalSubtokensCount = 0;
         boolean[] usedTokens = new boolean[secondToken.length() - SubtokenLength + 1];
         for (int i = 0; i < firstToken.length() - SubtokenLength + 1; ++i) {
-            String subtokenFirst = firstToken.substring(i, SubtokenLength);
+            String subtokenFirst = firstToken.substring(i, SubtokenLength + i);
             for (int j = 0; j < secondToken.length() - SubtokenLength + 1; ++j) {
                 if (!usedTokens[j]) {
-                    String subtokenSecond = secondToken.substring(j, SubtokenLength);
+                    String subtokenSecond = secondToken.substring(j, SubtokenLength + j);
                     if (subtokenFirst.equals(subtokenSecond)) {
                         equalSubtokensCount++;
                         usedTokens[j] = true;

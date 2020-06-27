@@ -3,6 +3,6 @@ package com.itmo;
 public class Main {
 
     public static void main(String[] args) {
-	    new App();
+	    new App(Double.parseDouble(args[0]));
     }
 }
