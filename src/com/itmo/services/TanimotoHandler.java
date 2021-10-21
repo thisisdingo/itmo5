@@ -21,6 +21,7 @@ public class TanimotoHandler {
     public TanimotoHandler(List<News> newsLists, double minSenseValue) {
         this.newsLists = newsLists;
         this.minSenseValue = minSenseValue;
+        // edited from vscode
     }
 
     public HashMap<String, DuplicateAnalyzeResult> getRetryCounts() {
